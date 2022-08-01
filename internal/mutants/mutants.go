@@ -3,6 +3,7 @@ package mutants
 import (
 	"errors"
 	"strings"
+	"sync"
 )
 
 const validChars = "ATCG"
@@ -19,9 +20,32 @@ func IsMutant(dna []string) (bool, error) {
 		return false, err
 	}
 
-	dnaCross := checkHorizontals(newDna) + checkVerticals(newDna) + checkDiagonal(newDna)
+	var wg sync.WaitGroup
+	var lock sync.RWMutex
+	counter := 0
+	wg.Add(3)
+	go func() {
+		defer lock.RUnlock()
+		lock.RLock()
+		counter = counter + checkHorizontals(newDna)
+		wg.Done()
+	}()
+	go func() {
+		defer lock.RUnlock()
+		lock.RLock()
+		counter = counter + checkVerticals(newDna)
+		wg.Done()
+	}()
+	go func() {
+		defer lock.RUnlock()
+		lock.RLock()
+		counter = counter + checkDiagonal(newDna)
+		wg.Done()
+	}()
 
-	if dnaCross > 0 {
+	wg.Wait()
+
+	if counter > 0 {
 		return true, nil
 	}
 
