@@ -30,8 +30,18 @@ func IsMutant(dna []string) (bool, error) {
 
 func checkDiagonal(dna []string) int {
 	matrix := convertToMatrix(dna)
-	getDiagonals(matrix)
-	return 1
+	diagonals := getDiagonals(matrix)
+	counter := 0
+	for _, row := range diagonals {
+		if strings.Contains(row, validDnaA) ||
+			strings.Contains(row, validDnaT) ||
+			strings.Contains(row, validDnaC) ||
+			strings.Contains(row, validDnaG) {
+			counter++
+		}
+	}
+
+	return counter
 }
 
 func convertToMatrix(dna []string) [][]string {
@@ -143,8 +153,11 @@ func checkDNASize(dna []string) error {
 	}
 
 	for _, row := range dna {
-		if !strings.ContainsAny(row, validChars) {
-			return errors.New("dna chars not valid")
+		chars := []rune(row)
+		for _, char := range chars {
+			if !strings.ContainsAny(string(char), validChars) {
+				return errors.New("dna chars not valid")
+			}
 		}
 	}
 

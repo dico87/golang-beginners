@@ -36,6 +36,11 @@ func Test_IsMutant(t *testing.T) {
 			DNA:      []string{"ATGCGA", "CAGTGC", "TTATGT", "AGAAGG", "CCCCTA", "TCACTG"},
 			Expected: true,
 		},
+		{
+			Name:     "Given_Is_Human",
+			DNA:      []string{"ATGCGA", "CAGTGC", "TTATTT", "AGACGG", "GCGTCA", "TCACTG"},
+			Expected: false,
+		},
 	}
 
 	for _, test := range tests {
